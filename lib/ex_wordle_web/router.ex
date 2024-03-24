@@ -18,6 +18,8 @@ defmodule ExWordleWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/hello", HelloLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
