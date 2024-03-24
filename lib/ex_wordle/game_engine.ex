@@ -12,41 +12,41 @@ defmodule ExWordle.GameEngine do
   end
 
   def add_key_attempted(game, key_attempted) do
-    if row_is_not_completed?(game.keys_attempted) and valid_key?(key_attempted) do
+    if row_is_completed?(game.keys_attempted) or invalid_key?(key_attempted) do
+      game
+    else
       new_keys_attempted = game.keys_attempted <> key_attempted
 
       update_game(game, %{
         attempts: update_attempts(game, new_keys_attempted),
         keys_attempted: new_keys_attempted
       })
-    else
-      game
     end
   end
 
   def remove_key_attempted(game) do
-    if row_is_not_empty?(game.keys_attempted) do
+    if row_is_empty?(game.keys_attempted) do
+      game
+    else
       new_keys_attempted = remove_last_key(game)
 
       update_game(game, %{
         attempts: update_attempts(game, new_keys_attempted),
         keys_attempted: new_keys_attempted
       })
-    else
-      game
     end
   end
 
-  defp row_is_not_completed?(keys_attempted) do
-    String.length(keys_attempted) < 5
+  defp row_is_completed?(keys_attempted) do
+    String.length(keys_attempted) >= 5
   end
 
-  defp row_is_not_empty?(keys_attempted) do
-    String.length(keys_attempted) > 0
+  defp row_is_empty?(keys_attempted) do
+    String.length(keys_attempted) <= 0
   end
 
-  defp valid_key?(key_attempted) do
-    key_attempted in @valid_keys
+  defp invalid_key?(key_attempted) do
+    key_attempted not in @valid_keys
   end
 
   defp update_attempts(game, new_keys_attempted) do
