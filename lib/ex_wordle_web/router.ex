@@ -17,9 +17,7 @@ defmodule ExWordleWeb.Router do
   scope "/", ExWordleWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
-
-    live "/hello", HelloLive.Index, :index
+    live "/", WordleLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
