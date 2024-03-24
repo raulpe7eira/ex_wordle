@@ -20,8 +20,8 @@ defmodule ExWordle.GameEngineTest do
       new_game = game_fixture()
       game = GameEngine.add_key_attempted(new_game, "K")
 
-      assert game.keys_attempted == "K"
       assert game.attempts == ["K", "", "", "", "", ""]
+      assert game.keys_attempted == "K"
     end
 
     test "it adds the key attempted to the correct attempt" do
@@ -34,30 +34,52 @@ defmodule ExWordle.GameEngineTest do
 
       game = GameEngine.add_key_attempted(new_game, "O")
 
-      assert game.keys_attempted == "KO"
       assert game.attempts == ["KAFKA", "KO", "", "", "", ""]
+      assert game.keys_attempted == "KO"
     end
 
     test "it does not add the key attempted when the key is invalid" do
       new_game = game_fixture()
       game = GameEngine.add_key_attempted(new_game, "/")
 
-      assert game.keys_attempted == ""
       assert game.attempts == ["", "", "", "", "", ""]
+      assert game.keys_attempted == ""
     end
 
     test "it does not add key attempted when the row is completed" do
       new_game =
         game_fixture(%{
           attempts: ["KAFKA", "", "", "", "", ""],
-          row_index: 0,
           keys_attempted: "KAFKA"
         })
 
       game = GameEngine.add_key_attempted(new_game, "O")
 
-      assert game.keys_attempted == "KAFKA"
       assert game.attempts == ["KAFKA", "", "", "", "", ""]
+      assert game.keys_attempted == "KAFKA"
+    end
+  end
+
+  describe "remove_key_attempted/1" do
+    test "removes key attempted from the keys attempted for the active row" do
+      new_game =
+        game_fixture(%{
+          attempts: ["KAFKA", "", "", "", "", ""],
+          keys_attempted: "KAFKA"
+        })
+
+      game = GameEngine.remove_key_attempted(new_game)
+
+      assert game.attempts == ["KAFK", "", "", "", "", ""]
+      assert game.keys_attempted == "KAFK"
+    end
+
+    test "it does not remove anything when keys attempted is empty" do
+      new_game = game_fixture()
+      game = GameEngine.remove_key_attempted(new_game)
+
+      assert game.attempts == ["", "", "", "", "", ""]
+      assert game.keys_attempted == ""
     end
   end
 

@@ -24,8 +24,25 @@ defmodule ExWordle.GameEngine do
     end
   end
 
+  def remove_key_attempted(game) do
+    if row_is_not_empty?(game.keys_attempted) do
+      new_keys_attempted = remove_last_key(game)
+
+      update_game(game, %{
+        attempts: update_attempts(game, new_keys_attempted),
+        keys_attempted: new_keys_attempted
+      })
+    else
+      game
+    end
+  end
+
   defp row_is_not_completed?(keys_attempted) do
     String.length(keys_attempted) < 5
+  end
+
+  defp row_is_not_empty?(keys_attempted) do
+    String.length(keys_attempted) > 0
   end
 
   defp valid_key?(key_attempted) do
@@ -38,5 +55,14 @@ defmodule ExWordle.GameEngine do
 
   defp update_game(game, updated_fields) do
     Map.merge(game, updated_fields)
+  end
+
+  defp remove_last_key(game) do
+    game.keys_attempted
+    |> String.graphemes()
+    |> Enum.reverse()
+    |> tl()
+    |> Enum.reverse()
+    |> Enum.join()
   end
 end
