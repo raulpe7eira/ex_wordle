@@ -37,24 +37,16 @@ defmodule ExWordle.GameEngine do
     end
   end
 
+  defp invalid_key?(key_attempted) do
+    key_attempted not in @valid_keys
+  end
+
   defp row_is_completed?(keys_attempted) do
     String.length(keys_attempted) >= 5
   end
 
   defp row_is_empty?(keys_attempted) do
     String.length(keys_attempted) <= 0
-  end
-
-  defp invalid_key?(key_attempted) do
-    key_attempted not in @valid_keys
-  end
-
-  defp update_attempts(game, new_keys_attempted) do
-    List.replace_at(game.attempts, game.row_index, new_keys_attempted)
-  end
-
-  defp update_game(game, updated_fields) do
-    Map.merge(game, updated_fields)
   end
 
   defp remove_last_key(game) do
@@ -64,5 +56,13 @@ defmodule ExWordle.GameEngine do
     |> tl()
     |> Enum.reverse()
     |> Enum.join()
+  end
+
+  defp update_attempts(game, new_keys_attempted) do
+    List.replace_at(game.attempts, game.row_index, new_keys_attempted)
+  end
+
+  defp update_game(game, updated_fields) do
+    Map.merge(game, updated_fields)
   end
 end
