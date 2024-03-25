@@ -9,14 +9,16 @@ defmodule ExWordleWeb.Game.WordleComponent do
 
   def tiles(assigns) do
     ~H"""
-    <div class="grid grid-rows-6 gap-1">
+    <div class="gap-3 grid grid-rows-6">
       <div
-        :for={{_attempt, _row_index} <- Enum.with_index(["", "", "", "", "", ""])}
-        class="pl-10 grid grid-cols-6 col-span-1 gap-x-0"
+        :for={{attempt, _row_index} <- Enum.with_index(@game.attempts)}
+        class="flex gap-3 justify-center"
       >
-        <div :for={_column_index <- 0..4} class="w-16 h-16">
-          <button class="w-16 h-16 border border-gray-400">
-            <span class="text-3xl subpixel-antialiased text-extrabold">A</span>
+        <div :for={key_attempted_index <- 0..4}>
+          <button class="border border-gray-400 h-16 rounded-md w-16">
+            <span class="subpixel-antialiased text-3xl text-extrabold">
+              <%= key_attempted_value(attempt, key_attempted_index) %>
+            </span>
           </button>
         </div>
       </div>
@@ -29,11 +31,13 @@ defmodule ExWordleWeb.Game.WordleComponent do
 
     ~H"""
     <div>
-      <div class="flex flex-col items-center space-y-1">
-        <div :for={key_line <- @keyword_lines} class="flex items-center space-x-1">
+      <div class="flex flex-col items-center md:space-y-2 space-y-1">
+        <div :for={keyboard_line <- @keyword_lines} class="flex items-center md:space-x-2 space-x-1">
           <button
-            :for={key <- key_line}
-            class="p-4 rounded text-gray-200 text-md flex font-bold justify-center items-center uppercase focus:ring-2 bg-gray-500"
+            :for={key <- keyboard_line}
+            class="bg-gray-500 flex focus:ring-2 font-bold items-center justify-center p-3 rounded text-gray-200 text-md uppercase"
+            phx-click="handle-key-clicked"
+            phx-value-key={key}
           >
             <%= key %>
           </button>
@@ -41,5 +45,11 @@ defmodule ExWordleWeb.Game.WordleComponent do
       </div>
     </div>
     """
+  end
+
+  defp key_attempted_value(attempt, key_attempted_index) do
+    attempt
+    |> String.graphemes()
+    |> Enum.at(key_attempted_index)
   end
 end

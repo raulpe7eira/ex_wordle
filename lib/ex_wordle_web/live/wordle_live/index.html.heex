@@ -1,7 +1,11 @@
 <div>
-  <WordleComponent.tiles />
+  <p class="bg-amber-100 border mb-5 p-3 rounded-md text-center">
+    <%= inspect(@game) %>
+  </p>
 
-  <hr class="mt-20" />
+  <WordleComponent.tiles game={@game} />
+
+  <hr class="mt-5" />
 
   <WordleComponent.keyboard />
 </div>
