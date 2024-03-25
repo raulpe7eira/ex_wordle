@@ -14,14 +14,15 @@ defmodule ExWordleWeb.Game.WordleComponent do
   def tiles(assigns) do
     ~H"""
     <div class="gap-3 grid grid-rows-6">
-      <div
-        :for={{attempt, _row_index} <- Enum.with_index(@game.attempts)}
-        class="flex gap-3 justify-center"
-      >
-        <div :for={key_attempted_index <- 0..4}>
-          <button class="border border-gray-400 h-16 rounded-md w-16">
+      <div :for={{attempt, row} <- Enum.with_index(@game.attempts)} class="flex gap-3 justify-center">
+        <div :for={col <- 0..4}>
+          <% key_attempted = String.at(attempt, col) %>
+          <button class={[
+            "border border-gray-400 h-16 rounded-md w-16",
+            tile_background(@game, row, col, key_attempted)
+          ]}>
             <span class="subpixel-antialiased text-3xl text-extrabold">
-              <%= key_attempted_value(attempt, key_attempted_index) %>
+              <%= key_attempted %>
             </span>
           </button>
         </div>
@@ -51,9 +52,20 @@ defmodule ExWordleWeb.Game.WordleComponent do
     """
   end
 
-  defp key_attempted_value(attempt, key_attempted_index) do
-    attempt
-    |> String.graphemes()
-    |> Enum.at(key_attempted_index)
+  defp tile_background(%{state: :playing, row: row}, row, _col, _key_attempted), do: ""
+
+  defp tile_background(game, row, _col, _key_attempted) when row > game.row, do: ""
+
+  defp tile_background(game, _row, col, key_attempted) do
+    cond do
+      GameEngine.found_key_attempted_in_position?(game, key_attempted, col) ->
+        "bg-green-600 text-gray-300"
+
+      GameEngine.found_key_attempted?(game, key_attempted) ->
+        "bg-yellow-600 text-gray-300"
+
+      true ->
+        "bg-gray-600 text-gray-300"
+    end
   end
 end

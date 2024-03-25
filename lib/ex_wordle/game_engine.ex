@@ -2,7 +2,7 @@ defmodule ExWordle.GameEngine do
   defstruct attempts: ["", "", "", "", "", ""],
             keys_attempted: "",
             state: :playing,
-            row_index: 0,
+            row: 0,
             word: ""
 
   @valid_keys ~w[Q W E R T Y U I O P A S D F G H J K L Ç Z X C V B N M]
@@ -50,11 +50,19 @@ defmodule ExWordle.GameEngine do
       update_game(game, %{
         keys_attempted: "",
         state: new_state,
-        row_index: update_row_index(game, new_state)
+        row: update_row(game, new_state)
       })
     else
       game
     end
+  end
+
+  def found_key_attempted_in_position?(game, key_attempted, position) do
+    key_attempted == String.at(game.word, position)
+  end
+
+  def found_key_attempted?(game, key_attempted) do
+    key_attempted in String.graphemes(game.word)
   end
 
   defp add_last_key(game, key_attempted) do
@@ -91,11 +99,11 @@ defmodule ExWordle.GameEngine do
   end
 
   defp update_attempts(game, new_keys_attempted) do
-    List.replace_at(game.attempts, game.row_index, new_keys_attempted)
+    List.replace_at(game.attempts, game.row, new_keys_attempted)
   end
 
-  defp update_row_index(game, :playing), do: game.row_index + 1
-  defp update_row_index(game, _), do: game.row_index
+  defp update_row(game, :playing), do: game.row + 1
+  defp update_row(game, _), do: game.row
 
   defp update_state(game) do
     cond do

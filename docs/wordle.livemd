@@ -9,7 +9,7 @@
 * [x] Creates a new game
 * [x] Adds a key attempted
 * [x] Removes a key attempted
-* [ ] Confirms an attempts
+* [x] Confirms an attempts
 * [ ] Some way to know if the game is over
   * [ ] Maybe store a possible game state?
 
@@ -35,7 +35,7 @@
 
 * [x] Each line written is an attempt executed on the game
 * [x] This feature must check if all letters have been informed
-* [ ] In the future we must also check whether the letters informed are in the possible set words of the game
+* [x] In the future we must also check whether the letters informed are in the possible set words of the game
 * [x] With all valid checks, we must update the game state so the user can start another attempt
 * [x] Checks if the user won the match
 
