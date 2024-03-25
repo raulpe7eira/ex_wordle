@@ -1,11 +1,15 @@
 defmodule ExWordleWeb.Game.WordleComponent do
   use Phoenix.Component
 
+  alias ExWordle.GameEngine
+
   @keyword_lines [
     ~w[Q W E R T Y U I O P],
     ~w[A S D F G H J K L],
     ~w[ENTER Z X C V B N M BACKSPACE]
   ]
+
+  attr :game, GameEngine
 
   def tiles(assigns) do
     ~H"""
