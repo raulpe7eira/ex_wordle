@@ -8,10 +8,10 @@ defmodule ExWordle.GameEngine do
   @valid_keys ~w[Q W E R T Y U I O P A S D F G H J K L Ç Z X C V B N M]
 
   def new(word) do
-    __struct__(word: String.upcase(word))
+    __struct__(word: word)
   end
 
-  def add_key_attempted(%{state: state} = game) when state != :playing, do: game
+  def add_key_attempted(%{state: state} = game, _key_attempted) when state != :playing, do: game
 
   def add_key_attempted(game, key_attempted) do
     if row_is_completed?(game.keys_attempted) or invalid_key?(key_attempted) do
@@ -41,9 +41,9 @@ defmodule ExWordle.GameEngine do
     end
   end
 
-  def confirm_attempt(%{state: state} = game) when state != :playing, do: game
+  def confirm_attempts(%{state: state} = game) when state != :playing, do: game
 
-  def confirm_attempt(game) do
+  def confirm_attempts(game) do
     if row_is_completed?(game.keys_attempted) do
       new_state = update_state(game)
 
@@ -59,6 +59,14 @@ defmodule ExWordle.GameEngine do
 
   defp add_last_key(game, key_attempted) do
     game.keys_attempted <> key_attempted
+  end
+
+  defp has_win_attempt?(attempts, word) do
+    Enum.any?(attempts, &(&1 == word))
+  end
+
+  defp has_no_other_attempt?(attempts) do
+    Enum.count(attempts, &(&1 != "")) == 6
   end
 
   defp invalid_key?(key_attempted) do
@@ -86,17 +94,13 @@ defmodule ExWordle.GameEngine do
     List.replace_at(game.attempts, game.row_index, new_keys_attempted)
   end
 
-  defp update_row_index(game, new_state) do
-    case new_state do
-      :playing -> game.row_index + 1
-      _ -> game.row_index
-    end
-  end
+  defp update_row_index(game, :playing), do: game.row_index + 1
+  defp update_row_index(game, _), do: game.row_index
 
   defp update_state(game) do
     cond do
-      Enum.any?(game.attempts, &(&1 == game.word)) -> :win
-      Enum.count(game.attempts, &(&1 != "")) == 6 -> :lose
+      has_win_attempt?(game.attempts, game.word) -> :win
+      has_no_other_attempt?(game.attempts) -> :lose
       true -> :playing
     end
   end
