@@ -40,7 +40,7 @@ defmodule ExWordleWeb.Game.WordleComponent do
           <button
             :for={key <- keyboard_line}
             class="bg-gray-500 flex focus:ring-2 font-bold items-center justify-center p-3 rounded text-gray-200 text-md uppercase"
-            phx-click="handle-key-clicked"
+            phx-click="handle-key-click"
             phx-value-key={key}
           >
             <%= key %>

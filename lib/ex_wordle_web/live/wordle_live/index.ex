@@ -12,20 +12,38 @@ defmodule ExWordleWeb.WordleLive.Index do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("handle-key-clicked", %{"key" => "BACKSPACE"}, socket) do
+  def handle_event("handle-key-click", %{"key" => "BACKSPACE"}, socket) do
     game = remove_key_attempted(socket.assigns.game)
     {:noreply, assign(socket, :game, game)}
   end
 
   @impl Phoenix.LiveView
-  def handle_event("handle-key-clicked", %{"key" => "ENTER"}, socket) do
+  def handle_event("handle-key-click", %{"key" => "ENTER"}, socket) do
     game = confirm_attempts(socket.assigns.game)
     {:noreply, assign(socket, :game, game)}
   end
 
   @impl Phoenix.LiveView
-  def handle_event("handle-key-clicked", %{"key" => key_attempted}, socket) do
+  def handle_event("handle-key-click", %{"key" => key_attempted}, socket) do
     game = add_key_attempted(socket.assigns.game, key_attempted)
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("handle-key-keydown", %{"key" => "Backspace"}, socket) do
+    game = remove_key_attempted(socket.assigns.game)
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("handle-key-keydown", %{"key" => "Enter"}, socket) do
+    game = confirm_attempts(socket.assigns.game)
+    {:noreply, assign(socket, :game, game)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("handle-key-keydown", %{"key" => key}, socket) do
+    game = add_key_attempted(socket.assigns.game, String.upcase(key))
     {:noreply, assign(socket, :game, game)}
   end
 
