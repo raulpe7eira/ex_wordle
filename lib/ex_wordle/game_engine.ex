@@ -1,6 +1,7 @@
 defmodule ExWordle.GameEngine do
   defstruct attempts: ["", "", "", "", "", ""],
             keys_attempted: "",
+            keys_attempted_state: %{},
             state: :playing,
             row: 0,
             word: ""
@@ -49,6 +50,7 @@ defmodule ExWordle.GameEngine do
 
       update_game(game, %{
         keys_attempted: "",
+        keys_attempted_state: update_keys_attempted_state(game),
         state: new_state,
         row: update_row(game, new_state)
       })
@@ -57,36 +59,36 @@ defmodule ExWordle.GameEngine do
     end
   end
 
-  def found_key_attempted_in_position?(game, key_attempted, position) do
-    key_attempted == String.at(game.word, position)
-  end
-
-  def found_key_attempted?(game, key_attempted) do
-    key_attempted in String.graphemes(game.word)
+  def key_attempted_state(game, key_attempted, position) do
+    cond do
+      found_key_attempted_in_position?(game, key_attempted, position) -> :found_in_position
+      found_key_attempted?(game, key_attempted) -> :found
+      true -> :not_found
+    end
   end
 
   defp add_last_key(game, key_attempted) do
     game.keys_attempted <> key_attempted
   end
 
-  defp has_win_attempt?(attempts, word) do
-    Enum.any?(attempts, &(&1 == word))
+  defp found_key_attempted?(game, key_attempted) do
+    key_attempted in String.graphemes(game.word)
+  end
+
+  defp found_key_attempted_in_position?(game, key_attempted, position) do
+    key_attempted == String.at(game.word, position)
   end
 
   defp has_no_other_attempt?(attempts) do
     Enum.count(attempts, &(&1 != "")) == 6
   end
 
+  defp has_win_attempt?(attempts, word) do
+    Enum.any?(attempts, &(&1 == word))
+  end
+
   defp invalid_key?(key_attempted) do
     key_attempted not in @valid_keys
-  end
-
-  defp row_is_completed?(keys_attempted) do
-    String.length(keys_attempted) >= 5
-  end
-
-  defp row_is_empty?(keys_attempted) do
-    String.length(keys_attempted) <= 0
   end
 
   defp remove_last_key(game) do
@@ -98,8 +100,42 @@ defmodule ExWordle.GameEngine do
     |> Enum.join()
   end
 
+  defp row_is_completed?(keys_attempted) do
+    String.length(keys_attempted) >= 5
+  end
+
+  defp row_is_empty?(keys_attempted) do
+    String.length(keys_attempted) <= 0
+  end
+
   defp update_attempts(game, new_keys_attempted) do
     List.replace_at(game.attempts, game.row, new_keys_attempted)
+  end
+
+  defp update_game(game, updated_fields) do
+    Map.merge(game, updated_fields)
+  end
+
+  defp update_keys_attempted_state(game) do
+    game.keys_attempted
+    |> String.graphemes()
+    |> Enum.with_index()
+    |> Enum.reduce(game.keys_attempted_state, fn {key_attempted, position}, acc ->
+      game
+      |> key_attempted_state(key_attempted, position)
+      |> case do
+        :found_in_position ->
+          Map.put(acc, key_attempted, :found_in_position)
+
+        :found ->
+          Map.update(acc, key_attempted, :found, fn value ->
+            if value == :found_in_position, do: value, else: :found
+          end)
+
+        :not_found ->
+          Map.put_new(acc, key_attempted, :not_found)
+      end
+    end)
   end
 
   defp update_row(game, :playing), do: game.row + 1
@@ -111,9 +147,5 @@ defmodule ExWordle.GameEngine do
       has_no_other_attempt?(game.attempts) -> :lose
       true -> :playing
     end
-  end
-
-  defp update_game(game, updated_fields) do
-    Map.merge(game, updated_fields)
   end
 end

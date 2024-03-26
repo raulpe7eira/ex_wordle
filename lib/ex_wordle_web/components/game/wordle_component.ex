@@ -40,7 +40,10 @@ defmodule ExWordleWeb.Game.WordleComponent do
         <div :for={keyboard_line <- @keyword_lines} class="flex items-center md:space-x-2 space-x-1">
           <button
             :for={key <- keyboard_line}
-            class="bg-gray-500 flex focus:ring-2 font-bold items-center justify-center p-3 rounded text-gray-200 text-md uppercase"
+            class={[
+              "flex focus:ring-2 font-bold items-center justify-center p-3 rounded text-gray-200 text-md uppercase",
+              keyboard_background(@game.keys_attempted_state, key)
+            ]}
             phx-click="handle-key-click"
             phx-value-key={key}
           >
@@ -52,20 +55,26 @@ defmodule ExWordleWeb.Game.WordleComponent do
     """
   end
 
-  defp tile_background(%{state: :playing, row: row}, row, _col, _key_attempted), do: ""
+  defp tile_background(%{state: :playing, row: row}, row, _col, _key_attempted),
+    do: "bg-transparent text-gray-900"
 
-  defp tile_background(game, row, _col, _key_attempted) when row > game.row, do: ""
+  defp tile_background(game, row, _col, _key_attempted) when row > game.row,
+    do: "bg-transparent text-gray-900"
 
   defp tile_background(game, _row, col, key_attempted) do
-    cond do
-      GameEngine.found_key_attempted_in_position?(game, key_attempted, col) ->
-        "bg-green-600 text-gray-300"
+    case GameEngine.key_attempted_state(game, key_attempted, col) do
+      :found_in_position -> "bg-green-600 text-gray-300"
+      :found -> "bg-yellow-600 text-gray-300"
+      :not_found -> "bg-gray-600 text-gray-300"
+    end
+  end
 
-      GameEngine.found_key_attempted?(game, key_attempted) ->
-        "bg-yellow-600 text-gray-300"
-
-      true ->
-        "bg-gray-600 text-gray-300"
+  defp keyboard_background(keys_attempted_state, key) do
+    case Map.get(keys_attempted_state, key) do
+      :found_in_position -> "bg-green-600"
+      :found -> "bg-yellow-600"
+      :not_found -> "bg-gray-800"
+      nil -> "bg-gray-500"
     end
   end
 end

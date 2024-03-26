@@ -210,21 +210,13 @@ defmodule ExWordle.GameEngineTest do
     end
   end
 
-  describe "found_key_attempted_in_position?/3" do
-    test "it checks if found the given key attemped in position" do
+  describe "key_attempted_state/3" do
+    test "when given a key attempted and position, returns the state" do
       new_game = setup_new_game()
 
-      assert GameEngine.found_key_attempted_in_position?(new_game, "G", 0) == true
-      assert GameEngine.found_key_attempted_in_position?(new_game, "G", 2) == false
-    end
-  end
-
-  describe "found_key_attempted?/2" do
-    test "it checks if found the given key attemped" do
-      new_game = setup_new_game()
-
-      assert GameEngine.found_key_attempted?(new_game, "G") == true
-      assert GameEngine.found_key_attempted?(new_game, "O") == false
+      assert GameEngine.key_attempted_state(new_game, "G", 0) == :found_in_position
+      assert GameEngine.key_attempted_state(new_game, "G", 2) == :found
+      assert GameEngine.key_attempted_state(new_game, "O", 0) == :not_found
     end
   end
 
