@@ -92,12 +92,8 @@ defmodule ExWordle.GameEngine do
   end
 
   defp remove_last_key(game) do
-    game.keys_attempted
-    |> String.graphemes()
-    |> Enum.reverse()
-    |> tl()
-    |> Enum.reverse()
-    |> Enum.join()
+    keys_attempted_length = String.length(game.keys_attempted)
+    String.slice(game.keys_attempted, 0, keys_attempted_length - 1)
   end
 
   defp row_is_completed?(keys_attempted) do
