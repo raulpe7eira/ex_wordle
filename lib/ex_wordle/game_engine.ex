@@ -6,6 +6,8 @@ defmodule ExWordle.GameEngine do
             row: 0,
             word: ""
 
+  @max_attempts 6
+  @max_key_attempted 5
   @valid_keys ~w[Q W E R T Y U I O P A S D F G H J K L Ç Z X C V B N M]
 
   def new(word) do
@@ -80,7 +82,7 @@ defmodule ExWordle.GameEngine do
   end
 
   defp has_no_other_attempt?(attempts) do
-    Enum.count(attempts, &(&1 != "")) == 6
+    Enum.count(attempts, &(&1 != "")) == @max_attempts
   end
 
   defp has_win_attempt?(attempts, word) do
@@ -97,7 +99,7 @@ defmodule ExWordle.GameEngine do
   end
 
   defp row_is_completed?(keys_attempted) do
-    String.length(keys_attempted) >= 5
+    String.length(keys_attempted) == @max_key_attempted
   end
 
   defp row_is_empty?(keys_attempted) do
