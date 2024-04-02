@@ -1,18 +1,11 @@
-defmodule ExWordle.GameEngine do
-  defstruct attempts: ["", "", "", "", "", ""],
-            keys_attempted: "",
-            keys_attempted_state: %{},
-            state: :playing,
-            row: 0,
-            word: ""
+defmodule ExWordle.Game.Engine do
+  alias ExWordle.Game
 
   @max_attempts 6
   @max_key_attempted 5
   @valid_keys ~w[Q W E R T Y U I O P A S D F G H J K L Ç Z X C V B N M]
 
-  def new(word) do
-    __struct__(word: word)
-  end
+  def new(word), do: Game.new(word)
 
   def add_key_attempted(%{state: state} = game, _key_attempted) when state != :playing, do: game
 
@@ -22,7 +15,7 @@ defmodule ExWordle.GameEngine do
     else
       new_keys_attempted = add_last_key(game, key_attempted)
 
-      update_game(game, %{
+      Game.update(game, %{
         attempts: update_attempts(game, new_keys_attempted),
         keys_attempted: new_keys_attempted
       })
@@ -37,7 +30,7 @@ defmodule ExWordle.GameEngine do
     else
       new_keys_attempted = remove_last_key(game)
 
-      update_game(game, %{
+      Game.update(game, %{
         attempts: update_attempts(game, new_keys_attempted),
         keys_attempted: new_keys_attempted
       })
@@ -50,7 +43,7 @@ defmodule ExWordle.GameEngine do
     if row_is_completed?(game.keys_attempted) do
       new_state = update_state(game)
 
-      update_game(game, %{
+      Game.update(game, %{
         keys_attempted: "",
         keys_attempted_state: update_keys_attempted_state(game),
         state: new_state,
@@ -108,10 +101,6 @@ defmodule ExWordle.GameEngine do
 
   defp update_attempts(game, new_keys_attempted) do
     List.replace_at(game.attempts, game.row, new_keys_attempted)
-  end
-
-  defp update_game(game, updated_fields) do
-    Map.merge(game, updated_fields)
   end
 
   defp update_keys_attempted_state(game) do

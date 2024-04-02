@@ -1,24 +1,24 @@
-defmodule ExWordle.GameEngineTest do
+defmodule ExWordle.Game.EngineTest do
   use ExUnit.Case
 
-  alias ExWordle.GameEngine
+  alias ExWordle.Game
 
   describe "new/1" do
     test "it will initialize the game with default state" do
-      assert %GameEngine{
+      assert %Game{
                attempts: ["", "", "", "", "", ""],
                keys_attempted: "",
                state: :playing,
                row: 0,
                word: "WINNE"
-             } = GameEngine.new("WINNE")
+             } = Game.Engine.new("WINNE")
     end
   end
 
   describe "add_key_attempted/2" do
     test "it adds the key attempted" do
       new_game = setup_new_game()
-      game = GameEngine.add_key_attempted(new_game, "K")
+      game = Game.Engine.add_key_attempted(new_game, "K")
 
       assert game.attempts == ["K", "", "", "", "", ""]
       assert game.keys_attempted == "K"
@@ -34,7 +34,7 @@ defmodule ExWordle.GameEngineTest do
           keys_attempted: "K"
         })
 
-      game = GameEngine.add_key_attempted(new_game, "O")
+      game = Game.Engine.add_key_attempted(new_game, "O")
 
       assert game.attempts == ["KAIAK", "KO", "", "", "", ""]
       assert game.keys_attempted == "KO"
@@ -44,7 +44,7 @@ defmodule ExWordle.GameEngineTest do
 
     test "it does not add the key attempted when the key is invalid" do
       new_game = setup_new_game()
-      game = GameEngine.add_key_attempted(new_game, "/")
+      game = Game.Engine.add_key_attempted(new_game, "/")
 
       assert game.attempts == ["", "", "", "", "", ""]
       assert game.keys_attempted == ""
@@ -59,7 +59,7 @@ defmodule ExWordle.GameEngineTest do
           keys_attempted: "KAIAK"
         })
 
-      game = GameEngine.add_key_attempted(new_game, "O")
+      game = Game.Engine.add_key_attempted(new_game, "O")
 
       assert game.attempts == ["KAIAK", "", "", "", "", ""]
       assert game.keys_attempted == "KAIAK"
@@ -76,7 +76,7 @@ defmodule ExWordle.GameEngineTest do
           word: "KAIAK"
         })
 
-      game = GameEngine.add_key_attempted(new_game, "O")
+      game = Game.Engine.add_key_attempted(new_game, "O")
 
       assert game.attempts == ["KAIAK", "", "", "", "", ""]
       assert game.keys_attempted == ""
@@ -93,7 +93,7 @@ defmodule ExWordle.GameEngineTest do
           keys_attempted: "KAIAK"
         })
 
-      game = GameEngine.remove_key_attempted(new_game)
+      game = Game.Engine.remove_key_attempted(new_game)
 
       assert game.attempts == ["KAIA", "", "", "", "", ""]
       assert game.keys_attempted == "KAIA"
@@ -103,7 +103,7 @@ defmodule ExWordle.GameEngineTest do
 
     test "it does not remove anything when keys attempted is empty" do
       new_game = setup_new_game()
-      game = GameEngine.remove_key_attempted(new_game)
+      game = Game.Engine.remove_key_attempted(new_game)
 
       assert game.attempts == ["", "", "", "", "", ""]
       assert game.keys_attempted == ""
@@ -120,7 +120,7 @@ defmodule ExWordle.GameEngineTest do
           word: "KAIAK"
         })
 
-      game = GameEngine.remove_key_attempted(new_game)
+      game = Game.Engine.remove_key_attempted(new_game)
 
       assert game.attempts == ["KAIAK", "", "", "", "", ""]
       assert game.keys_attempted == ""
@@ -137,7 +137,7 @@ defmodule ExWordle.GameEngineTest do
           keys_attempted: "KAIAK"
         })
 
-      game = GameEngine.confirm_attempts(new_game)
+      game = Game.Engine.confirm_attempts(new_game)
 
       assert game.attempts == ["KAIAK", "", "", "", "", ""]
       assert game.keys_attempted == ""
@@ -152,7 +152,7 @@ defmodule ExWordle.GameEngineTest do
           keys_attempted: "KAIA"
         })
 
-      game = GameEngine.confirm_attempts(new_game)
+      game = Game.Engine.confirm_attempts(new_game)
 
       assert game.attempts == ["KAIA", "", "", "", "", ""]
       assert game.keys_attempted == "KAIA"
@@ -168,7 +168,7 @@ defmodule ExWordle.GameEngineTest do
           row: 6
         })
 
-      game = GameEngine.confirm_attempts(new_game)
+      game = Game.Engine.confirm_attempts(new_game)
 
       assert game.attempts == ["KAIAK", "PLACE", "BIKES", "TRICK", "YOURS", "ROUTE"]
       assert game.keys_attempted == ""
@@ -184,7 +184,7 @@ defmodule ExWordle.GameEngineTest do
           row: 3
         })
 
-      game = GameEngine.confirm_attempts(new_game)
+      game = Game.Engine.confirm_attempts(new_game)
 
       assert game.attempts == ["KAIAK", "PLACE", "GREAT", "", "", ""]
       assert game.keys_attempted == ""
@@ -201,7 +201,7 @@ defmodule ExWordle.GameEngineTest do
           word: "KAIAK"
         })
 
-      game = GameEngine.confirm_attempts(new_game)
+      game = Game.Engine.confirm_attempts(new_game)
 
       assert game.attempts == ["KAIAK", "", "", "", "", ""]
       assert game.keys_attempted == ""
@@ -214,14 +214,14 @@ defmodule ExWordle.GameEngineTest do
     test "when given a key attempted and position, returns the state" do
       new_game = setup_new_game()
 
-      assert GameEngine.key_attempted_state(new_game, "G", 0) == :found_in_position
-      assert GameEngine.key_attempted_state(new_game, "G", 2) == :found
-      assert GameEngine.key_attempted_state(new_game, "O", 0) == :not_found
+      assert Game.Engine.key_attempted_state(new_game, "G", 0) == :found_in_position
+      assert Game.Engine.key_attempted_state(new_game, "G", 2) == :found
+      assert Game.Engine.key_attempted_state(new_game, "O", 0) == :not_found
     end
   end
 
   defp setup_new_game(attrs \\ %{}) do
-    new_game = GameEngine.new("GREAT")
+    new_game = Game.Engine.new("GREAT")
     Map.merge(new_game, attrs)
   end
 end

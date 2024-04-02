@@ -1,7 +1,7 @@
-defmodule ExWordleWeb.Game.WordleComponent do
+defmodule ExWordleWeb.WordleComponent do
   use Phoenix.Component
 
-  alias ExWordle.GameEngine
+  alias ExWordle.Game
 
   @keyword_lines [
     ~w[Q W E R T Y U I O P],
@@ -9,7 +9,7 @@ defmodule ExWordleWeb.Game.WordleComponent do
     ~w[ENTER Z X C V B N M BACKSPACE]
   ]
 
-  attr :game, GameEngine
+  attr :game, Game
 
   def tiles(assigns) do
     ~H"""
@@ -30,6 +30,8 @@ defmodule ExWordleWeb.Game.WordleComponent do
     </div>
     """
   end
+
+  attr :game, Game
 
   def keyboard(assigns) do
     assigns = assign(assigns, :keyword_lines, @keyword_lines)
@@ -62,7 +64,7 @@ defmodule ExWordleWeb.Game.WordleComponent do
     do: "bg-transparent text-gray-900"
 
   defp tile_background(game, _row, col, key_attempted) do
-    case GameEngine.key_attempted_state(game, key_attempted, col) do
+    case Game.Engine.key_attempted_state(game, key_attempted, col) do
       :found_in_position -> "bg-green-600 text-gray-300"
       :found -> "bg-yellow-600 text-gray-300"
       :not_found -> "bg-gray-600 text-gray-300"
