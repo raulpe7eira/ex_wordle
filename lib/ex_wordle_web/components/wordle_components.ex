@@ -1,4 +1,4 @@
-defmodule ExWordleWeb.WordleComponent do
+defmodule ExWordleWeb.WordleComponents do
   use Phoenix.Component
 
   alias ExWordle.Game
@@ -9,7 +9,7 @@ defmodule ExWordleWeb.WordleComponent do
     ~w[ENTER Z X C V B N M BACKSPACE]
   ]
 
-  attr :game, Game
+  attr :game, Game, required: true
 
   def tiles(assigns) do
     ~H"""
@@ -31,7 +31,7 @@ defmodule ExWordleWeb.WordleComponent do
     """
   end
 
-  attr :game, Game
+  attr :game, Game, required: true
 
   def keyboard(assigns) do
     assigns = assign(assigns, :keyword_lines, @keyword_lines)

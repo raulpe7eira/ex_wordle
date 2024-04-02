@@ -1,11 +1,9 @@
 <div phx-window-keydown="handle-key-keydown">
-  <p class="bg-amber-100 border mb-5 p-3 rounded-md text-center">
-    <%= inspect(@game) %>
-  </p>
+  <WordleComponents.tiles game={@game} />
 
-  <WordleComponent.tiles game={@game} />
+  <hr class="mt-10" />
 
-  <hr class="mt-5" />
+  <WordleComponents.keyboard game={@game} />
 
-  <WordleComponent.keyboard game={@game} />
+  <ModalGameOver.show :if={@game.state != :playing} id="modal-game-over" game={@game} />
 </div>

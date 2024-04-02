@@ -2,7 +2,8 @@ defmodule ExWordleWeb.WordleLive.Index do
   use ExWordleWeb, :live_view
 
   alias ExWordle.Game
-  alias ExWordleWeb.WordleComponent
+  alias ExWordleWeb.ModalGameOver
+  alias ExWordleWeb.WordleComponents
 
   @words ~w[PLACE WINNE GREAT]
 
