@@ -14,50 +14,68 @@ defmodule ExWordleWeb.WordleLive.Index do
 
   @impl Phoenix.LiveView
   def handle_event("handle-key-click", %{"key" => "BACKSPACE"}, socket) do
-    game = remove_key_attempted(socket.assigns.game)
-    {:noreply, assign(socket, :game, game)}
+    {:noreply, remove_key_attempted(socket)}
   end
 
   @impl Phoenix.LiveView
   def handle_event("handle-key-click", %{"key" => "ENTER"}, socket) do
-    game = confirm_attempts(socket.assigns.game)
-    {:noreply, assign(socket, :game, game)}
+    {:noreply, confirm_attempts(socket)}
   end
 
   @impl Phoenix.LiveView
   def handle_event("handle-key-click", %{"key" => key_attempted}, socket) do
-    game = add_key_attempted(socket.assigns.game, key_attempted)
-    {:noreply, assign(socket, :game, game)}
+    {:noreply, add_key_attempted(socket, key_attempted)}
   end
 
   @impl Phoenix.LiveView
   def handle_event("handle-key-keydown", %{"key" => "Backspace"}, socket) do
-    game = remove_key_attempted(socket.assigns.game)
-    {:noreply, assign(socket, :game, game)}
+    {:noreply, remove_key_attempted(socket)}
   end
 
   @impl Phoenix.LiveView
   def handle_event("handle-key-keydown", %{"key" => "Enter"}, socket) do
-    game = confirm_attempts(socket.assigns.game)
-    {:noreply, assign(socket, :game, game)}
+    {:noreply, confirm_attempts(socket)}
   end
 
   @impl Phoenix.LiveView
-  def handle_event("handle-key-keydown", %{"key" => key}, socket) do
-    game = add_key_attempted(socket.assigns.game, String.upcase(key))
-    {:noreply, assign(socket, :game, game)}
+  def handle_event("handle-key-keydown", %{"key" => key_attempted}, socket) do
+    {:noreply, add_key_attempted(socket, key_attempted)}
   end
 
-  defp add_key_attempted(game, key_attempted) do
-    Game.Engine.add_key_attempted(game, key_attempted)
+  defp add_key_attempted(socket, key_attempted) do
+    case Game.Engine.add_key_attempted(socket.assigns.game, key_attempted) do
+      {:ok, game} ->
+        socket
+        |> assign(:game, game)
+        |> push_event("pop", WordleComponents.get_tile_id(game))
+
+      {:error, _} ->
+        socket
+    end
   end
 
-  defp confirm_attempts(game) do
-    Game.Engine.confirm_attempts(game)
+  defp confirm_attempts(socket) do
+    case Game.Engine.confirm_attempts(socket.assigns.game) do
+      {:ok, game} ->
+        socket
+        |> assign(:game, game)
+        |> push_event("rotate", WordleComponents.get_tile_row_id(socket.assigns.game))
+
+      {:error, _} ->
+        push_event(socket, "wiggle", WordleComponents.get_tile_row_id(socket.assigns.game))
+    end
   end
 
-  defp remove_key_attempted(game) do
-    Game.Engine.remove_key_attempted(game)
+  defp remove_key_attempted(socket) do
+    case Game.Engine.remove_key_attempted(socket.assigns.game) do
+      {:ok, game} ->
+        socket
+        |> assign(:game, game)
+        |> push_event("unpop", WordleComponents.get_tile_id(socket.assigns.game))
+
+      {:error, _} ->
+        socket
+    end
   end
 
   defp request_game() do
