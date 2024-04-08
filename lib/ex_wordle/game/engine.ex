@@ -7,50 +7,64 @@ defmodule ExWordle.Game.Engine do
 
   def new(word), do: Game.new(word)
 
-  def add_key_attempted(%{state: state} = game, _key_attempted) when state != :playing, do: game
+  def add_key_attempted(%{state: state}, _key_attempted) when state != :playing,
+    do: {:error, :game_already_over}
 
   def add_key_attempted(game, key_attempted) do
+    key_attempted = String.upcase(key_attempted)
+
     if row_is_completed?(game.keys_attempted) or invalid_key?(key_attempted) do
-      game
+      {:error, :invalid_attempt}
     else
       new_keys_attempted = add_last_key(game, key_attempted)
 
-      Game.update(game, %{
-        attempts: update_attempts(game, new_keys_attempted),
-        keys_attempted: new_keys_attempted
-      })
+      game =
+        Game.update(game, %{
+          attempts: update_attempts(game, new_keys_attempted),
+          keys_attempted: new_keys_attempted
+        })
+
+      {:ok, game}
     end
   end
 
-  def remove_key_attempted(%{state: state} = game) when state != :playing, do: game
+  def remove_key_attempted(%{state: state}) when state != :playing,
+    do: {:error, :game_already_over}
 
   def remove_key_attempted(game) do
     if row_is_empty?(game.keys_attempted) do
-      game
+      {:error, :no_keys_attempted}
     else
       new_keys_attempted = remove_last_key(game)
 
-      Game.update(game, %{
-        attempts: update_attempts(game, new_keys_attempted),
-        keys_attempted: new_keys_attempted
-      })
+      game =
+        Game.update(game, %{
+          attempts: update_attempts(game, new_keys_attempted),
+          keys_attempted: new_keys_attempted
+        })
+
+      {:ok, game}
     end
   end
 
-  def confirm_attempts(%{state: state} = game) when state != :playing, do: game
+  def confirm_attempts(%{state: state}) when state != :playing,
+    do: {:error, :game_already_over}
 
   def confirm_attempts(game) do
     if row_is_completed?(game.keys_attempted) do
       new_state = update_state(game)
 
-      Game.update(game, %{
-        keys_attempted: "",
-        keys_attempted_state: update_keys_attempted_state(game),
-        state: new_state,
-        row: update_row(game, new_state)
-      })
+      game =
+        Game.update(game, %{
+          keys_attempted: "",
+          keys_attempted_state: update_keys_attempted_state(game),
+          state: new_state,
+          row: update_row(game, new_state)
+        })
+
+      {:ok, game}
     else
-      game
+      {:error, :not_enough_keys_attempted}
     end
   end
 
