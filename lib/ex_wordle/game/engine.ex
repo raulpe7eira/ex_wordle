@@ -15,7 +15,7 @@ defmodule ExWordle.Game.Engine do
   def add_key_attempted(game, key_attempted) do
     key_attempted = String.upcase(key_attempted)
 
-    if max_keys_attempted?(game.keys_attempted) or invalid_key?(key_attempted) do
+    if invalid_attempt?(game.keys_attempted, key_attempted) do
       {:error, :invalid_attempt}
     else
       new_keys_attempted = add_last_key(game, key_attempted)
@@ -101,6 +101,10 @@ defmodule ExWordle.Game.Engine do
 
   defp has_win_attempt?(attempts, word) do
     Enum.any?(attempts, &(&1 == word))
+  end
+
+  defp invalid_attempt?(keys_attempted, key_attempted) do
+    max_keys_attempted?(keys_attempted) or invalid_key?(key_attempted)
   end
 
   defp invalid_guesses?(keys_attempted) do
