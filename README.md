@@ -20,4 +20,6 @@ $ iex -S mix.server
 
 ## Video demo
 
-![video-demo](https://github.com/raulpe7eira/ex_wordle/assets/456260/4bacd563-4481-4c30-a14c-2c536e3b6dfc)
+<p align="center">
+  <img src="https://github.com/raulpe7eira/ex_wordle/assets/456260/4bacd563-4481-4c30-a14c-2c536e3b6dfc" alt="video demo" />
+</p>
