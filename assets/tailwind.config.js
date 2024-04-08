@@ -28,6 +28,12 @@ module.exports = {
           '50%': { transform: 'rotateX(90deg)' },
           '100%': { transform: 'rotateX(0deg)' },
         },
+        unpop: {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.1)' },
+          '75%': { transform: 'scale(0.9)' },
+          '100%': { transform: 'scale(1)' },
+        },
         wiggle: {
           '0%': { transform: 'translateX(0px)' },
           '25%': { transform: 'translateX(-5px)' },
@@ -39,7 +45,7 @@ module.exports = {
       animation: {
         pop: 'pop 0.2s ease-out',
         rotate: 'rotate 0.6s ease-out forwards',
-        unpop: 'pop 0.2s ease-out',
+        unpop: 'unpop 0.2s ease-out',
         wiggle: 'wiggle 0.2s linear 5',
       },
       transitionDelay: {
