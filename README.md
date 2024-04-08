@@ -18,7 +18,7 @@ $ iex -S mix.server
 
 ![snapshot](https://github.com/raulpe7eira/ex_wordle/assets/456260/4c8ad159-884d-4fbb-8d2b-f4731e52d94a)
 
-## Video demo
+## Demo
 
 <p align="center">
   <img src="https://github.com/raulpe7eira/ex_wordle/assets/456260/4bacd563-4481-4c30-a14c-2c536e3b6dfc" alt="video demo" />
