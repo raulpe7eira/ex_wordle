@@ -78,6 +78,8 @@ defmodule ExWordleWeb.WordleLive.Index do
   end
 
   defp request_game() do
-    Game.Engine.new(Game.Server.get_daily_word())
+    word = Game.Server.get_daily_word()
+    IO.inspect(word, label: "WORD")
+    Game.Engine.new(word)
   end
 end

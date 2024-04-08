@@ -1,7 +1,7 @@
 defmodule ExWordle.Game.Server do
   use GenServer
 
-  @words ~w[PLACE WINNE GREAT]
+  alias ExWordle.Constants
 
   def start_link(initial_state) do
     GenServer.start_link(__MODULE__, initial_state, name: __MODULE__)
@@ -25,7 +25,7 @@ defmodule ExWordle.Game.Server do
 
   @impl true
   def handle_continue(:set_word, _state) do
-    {:noreply, %{date: Date.utc_today(), word: Enum.random(@words)}}
+    {:noreply, %{date: Date.utc_today(), word: word_of_the_day()}}
   end
 
   @impl true
@@ -33,13 +33,19 @@ defmodule ExWordle.Game.Server do
     schedule_work()
 
     if state.date != Date.utc_today() do
-      {:noreply, %{date: Date.utc_today(), word: Enum.random(@words)}}
+      {:noreply, %{date: Date.utc_today(), word: word_of_the_day()}}
     else
       {:noreply, state}
     end
   end
 
-  defp schedule_work() do
+  defp schedule_work do
     Process.send_after(self(), :check_time, :timer.seconds(60))
+  end
+
+  defp word_of_the_day do
+    Constants.words()
+    |> Enum.random()
+    |> String.upcase()
   end
 end
