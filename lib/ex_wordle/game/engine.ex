@@ -1,8 +1,10 @@
 defmodule ExWordle.Game.Engine do
   alias ExWordle.Game
 
+  alias ExWordle.Constants
+
   @max_attempts 6
-  @max_key_attempted 5
+  @max_keys_attempted 5
   @valid_keys ~w[Q W E R T Y U I O P A S D F G H J K L Ç Z X C V B N M]
 
   def new(word), do: Game.new(word)
@@ -13,7 +15,7 @@ defmodule ExWordle.Game.Engine do
   def add_key_attempted(game, key_attempted) do
     key_attempted = String.upcase(key_attempted)
 
-    if row_is_completed?(game.keys_attempted) or invalid_key?(key_attempted) do
+    if max_keys_attempted?(game.keys_attempted) or invalid_key?(key_attempted) do
       {:error, :invalid_attempt}
     else
       new_keys_attempted = add_last_key(game, key_attempted)
@@ -51,20 +53,25 @@ defmodule ExWordle.Game.Engine do
     do: {:error, :game_already_over}
 
   def confirm_attempts(game) do
-    if row_is_completed?(game.keys_attempted) do
-      new_state = update_state(game)
+    cond do
+      not max_keys_attempted?(game.keys_attempted) ->
+        {:error, :not_enough_keys_attempted}
 
-      game =
-        Game.update(game, %{
-          keys_attempted: "",
-          keys_attempted_state: update_keys_attempted_state(game),
-          state: new_state,
-          row: update_row(game, new_state)
-        })
+      invalid_guesses?(game.keys_attempted) ->
+        {:error, :invalid_guesses}
 
-      {:ok, game}
-    else
-      {:error, :not_enough_keys_attempted}
+      true ->
+        new_state = update_state(game)
+
+        game =
+          Game.update(game, %{
+            keys_attempted: "",
+            keys_attempted_state: update_keys_attempted_state(game),
+            state: new_state,
+            row: update_row(game, new_state)
+          })
+
+        {:ok, game}
     end
   end
 
@@ -96,17 +103,21 @@ defmodule ExWordle.Game.Engine do
     Enum.any?(attempts, &(&1 == word))
   end
 
+  defp invalid_guesses?(keys_attempted) do
+    String.downcase(keys_attempted) not in Constants.words()
+  end
+
   defp invalid_key?(key_attempted) do
     key_attempted not in @valid_keys
+  end
+
+  defp max_keys_attempted?(keys_attempted) do
+    String.length(keys_attempted) == @max_keys_attempted
   end
 
   defp remove_last_key(game) do
     keys_attempted_length = String.length(game.keys_attempted)
     String.slice(game.keys_attempted, 0, keys_attempted_length - 1)
-  end
-
-  defp row_is_completed?(keys_attempted) do
-    String.length(keys_attempted) == @max_key_attempted
   end
 
   defp row_is_empty?(keys_attempted) do
