@@ -6,8 +6,6 @@ defmodule ExWordleWeb.WordleLive.Index do
   alias ExWordleWeb.ModalGameOver
   alias ExWordleWeb.Tiles
 
-  @words ~w[PLACE WINNE GREAT]
-
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :game, request_game())}
@@ -80,8 +78,6 @@ defmodule ExWordleWeb.WordleLive.Index do
   end
 
   defp request_game() do
-    @words
-    |> Enum.random()
-    |> Game.Engine.new()
+    Game.Engine.new(Game.Server.get_daily_word())
   end
 end

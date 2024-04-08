@@ -17,7 +17,9 @@ defmodule ExWordle.Application do
       # Start a worker by calling: ExWordle.Worker.start_link(arg)
       # {ExWordle.Worker, arg},
       # Start to serve requests, typically the last entry
-      ExWordleWeb.Endpoint
+      ExWordleWeb.Endpoint,
+      # Start to server games
+      {ExWordle.Game.Server, name: ExWordle.Game.Server}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
