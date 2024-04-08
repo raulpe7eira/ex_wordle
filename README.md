@@ -1,18 +1,19 @@
 # ExWordle
 
-To start your Phoenix server:
+This core corresponds to the [Indie Courses: Building Wordle Game with Elixir and Phoenix LiveView](https://indiecourses.com/catalog/54c9e6b0-f39e-43a5-b775-a0de3f634b58) lab by [Thiago Ramos](https://twitter.com/thramosal).
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+> The project simulates a Wordle game.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Compilation, tests and runs
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+```bash
+$ cd ex_wordle
+$ asdf install
+$ mix compile
+$ mix test
+$ iex -S mix.server
+```
 
-## Learn more
+## Snapshot/Video
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+
