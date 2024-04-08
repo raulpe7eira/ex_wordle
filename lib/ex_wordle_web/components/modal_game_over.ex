@@ -7,7 +7,7 @@ defmodule ExWordleWeb.ModalGameOver do
   attr :id, :string, required: true
   attr :game, Game, required: true
 
-  def show(assigns) do
+  def render(assigns) do
     ~H"""
     <div
       id={@id}

@@ -2,8 +2,9 @@ defmodule ExWordleWeb.WordleLive.Index do
   use ExWordleWeb, :live_view
 
   alias ExWordle.Game
+  alias ExWordleWeb.Keyboard
   alias ExWordleWeb.ModalGameOver
-  alias ExWordleWeb.WordleComponents
+  alias ExWordleWeb.Tiles
 
   @words ~w[PLACE WINNE GREAT]
 
@@ -47,7 +48,7 @@ defmodule ExWordleWeb.WordleLive.Index do
       {:ok, game} ->
         socket
         |> assign(:game, game)
-        |> push_event("pop", WordleComponents.get_tile_id(game))
+        |> push_event("pop", Tiles.get_tile_id(game))
 
       {:error, _} ->
         socket
@@ -59,10 +60,10 @@ defmodule ExWordleWeb.WordleLive.Index do
       {:ok, game} ->
         socket
         |> assign(:game, game)
-        |> push_event("rotate", WordleComponents.get_tile_row_id(socket.assigns.game))
+        |> push_event("rotate", Tiles.get_tiles_row_id(socket.assigns.game))
 
       {:error, _} ->
-        push_event(socket, "wiggle", WordleComponents.get_tile_row_id(socket.assigns.game))
+        push_event(socket, "wiggle", Tiles.get_tiles_row_id(socket.assigns.game))
     end
   end
 
@@ -71,7 +72,7 @@ defmodule ExWordleWeb.WordleLive.Index do
       {:ok, game} ->
         socket
         |> assign(:game, game)
-        |> push_event("unpop", WordleComponents.get_tile_id(socket.assigns.game))
+        |> push_event("unpop", Tiles.get_tile_id(socket.assigns.game))
 
       {:error, _} ->
         socket
